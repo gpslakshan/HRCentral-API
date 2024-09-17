@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HRCentral.API", "HRCentral.API\HRCentral.API.csproj", "{94DD1843-9BA0-4FA6-B207-DF84BB97C7AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94DD1843-9BA0-4FA6-B207-DF84BB97C7AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94DD1843-9BA0-4FA6-B207-DF84BB97C7AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94DD1843-9BA0-4FA6-B207-DF84BB97C7AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94DD1843-9BA0-4FA6-B207-DF84BB97C7AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
