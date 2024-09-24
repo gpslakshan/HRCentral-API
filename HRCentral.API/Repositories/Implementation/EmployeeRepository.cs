@@ -1,6 +1,7 @@
 using HRCentral.API.Data;
 using HRCentral.API.Models.Domain;
 using HRCentral.API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace HRCentral.API.Repositories.Implementation;
 
@@ -13,28 +14,38 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
     
-    public Task<IEnumerable<Employee>> GetAllAsync()
+    public async Task<IEnumerable<Employee?>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        return await _context.Employees.ToListAsync();
     }
 
-    public Task<Employee> GetByIdAsync(int id)
+    public async Task<Employee?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Employees.FindAsync(id);
     }
 
-    public Task AddEmployeeAsync(Employee employee)
+    public async Task AddEmployeeAsync(Employee? employee)
     {
-        throw new NotImplementedException();
+        await _context.Employees.AddAsync(employee);
+        await _context.SaveChangesAsync();
     }
 
-    public Task UpdateEmployeeAsync(Employee employee)
+    public async Task UpdateEmployeeAsync(Employee employee)
     {
-        throw new NotImplementedException();
+        _context.Employees.Update(employee);
+        await _context.SaveChangesAsync();
     }
 
-    public Task DeleteEmployeeAsync(int id)
+    public async Task DeleteEmployeeAsync(int id)
     {
-        throw new NotImplementedException();
+        var employeeInDb = await _context.Employees.FindAsync(id);
+
+        if (employeeInDb == null)
+        {
+            throw new KeyNotFoundException($"Employee with id: {id} was not found");
+        }
+
+        _context.Employees.Remove(employeeInDb);
+        await _context.SaveChangesAsync();
     }
 }
