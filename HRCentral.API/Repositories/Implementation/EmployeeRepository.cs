@@ -14,7 +14,7 @@ public class EmployeeRepository : IEmployeeRepository
         _context = context;
     }
     
-    public async Task<IEnumerable<Employee?>> GetAllAsync()
+    public async Task<IEnumerable<Employee>> GetAllAsync()
     {
         return await _context.Employees.ToListAsync();
     }
@@ -24,7 +24,7 @@ public class EmployeeRepository : IEmployeeRepository
         return await _context.Employees.FindAsync(id);
     }
 
-    public async Task AddEmployeeAsync(Employee? employee)
+    public async Task AddEmployeeAsync(Employee employee)
     {
         await _context.Employees.AddAsync(employee);
         await _context.SaveChangesAsync();
