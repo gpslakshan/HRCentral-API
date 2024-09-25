@@ -1,6 +1,7 @@
-using HRCentral.API.Models.Dtos;
-using HRCentral.API.Models.Entities;
-using HRCentral.API.Repositories.Interfaces;
+using AutoMapper;
+using HRCentral.API.DTOs;
+using HRCentral.API.Entities;
+using HRCentral.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HRCentral.API.Controllers;
@@ -10,37 +11,24 @@ namespace HRCentral.API.Controllers;
 public class EmployeesController : ControllerBase
 {
     private readonly IEmployeeRepository _employeeRepository;
-    
-    public EmployeesController(IEmployeeRepository employeeRepository)
+    private readonly IMapper _mapper;
+
+    public EmployeesController(IEmployeeRepository employeeRepository, IMapper mapper)
     {
         _employeeRepository = employeeRepository;
+        _mapper = mapper;
     }
     
-    [HttpPost]
-    public async Task<IActionResult> CreateEmployee(CreateEmployeeDto createEmployeeDto)
-    {
-        var employee = new Employee
-        {
-            FirstName = createEmployeeDto.FirstName,
-            LastName = createEmployeeDto.LastName,
-            Email = createEmployeeDto.Email,
-            Phone = createEmployeeDto.Phone,
-            Position = createEmployeeDto.Position
-        };
-        
-        await _employeeRepository.AddEmployeeAsync(employee);
-        return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
-    }
-
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Employee>>> GetAllEmployees()
+    public async Task<IActionResult> GetAllEmployees()
     {
-        var employees = await _employeeRepository.GetAllAsync();
-        return Ok(employees);
+        var allEmployees = await _employeeRepository.GetAllAsync();
+        var response = _mapper.Map<IEnumerable<EmployeeDto>>(allEmployees);
+        return Ok(response);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Employee>> GetEmployeeById(int id)
+    public async Task<IActionResult> GetEmployeeById([FromRoute] int id)
     {
         var employee = await _employeeRepository.GetByIdAsync(id);
 
@@ -48,42 +36,47 @@ public class EmployeesController : ControllerBase
         {
             return NotFound();
         }
+        
+        var response = _mapper.Map<EmployeeDto>(employee);
+        return Ok(response);
+    }
 
-        return Ok(employee);
+    [HttpPost]
+    public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDto createEmployeeDto)
+    {
+        var employee = _mapper.Map<Employee>(createEmployeeDto);
+        await _employeeRepository.AddAsync(employee);
+        var response = _mapper.Map<EmployeeDto>(employee);
+        return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, response);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<Employee>> UpdateEmployee([FromRoute] int id, 
-        [FromBody] UpdateEmployeeDto updateEmployeeDto)
+    public async Task<IActionResult> UpdateEmployee([FromRoute] int id, [FromBody] UpdateEmployeeDto updateEmployeeDto)
     {
-        var employee = await _employeeRepository.GetByIdAsync(id);
+        var employee = _mapper.Map<Employee>(updateEmployeeDto);
+        employee.Id = id;
 
-        if (employee == null)
+        var updatedEmployee = await _employeeRepository.UpdateAsync(employee);
+
+        if (updatedEmployee == null)
         {
             return NotFound();
         }
-
-        employee.FirstName = updateEmployeeDto.FirstName;
-        employee.LastName = updateEmployeeDto.LastName;
-        employee.Email = updateEmployeeDto.Email;
-        employee.Phone = updateEmployeeDto.Phone;
-        employee.Position = updateEmployeeDto.Position;
-
-        await _employeeRepository.SaveChangesAsync();
-        return Ok(employee);
+        
+        var response = _mapper.Map<EmployeeDto>(updatedEmployee);
+        return Ok(response);
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteEmployee(int id)
+    public async Task<IActionResult> DeleteEmployee([FromRoute] int id)
     {
-        var employee = await _employeeRepository.GetByIdAsync(id);
+        var isDeleted = await _employeeRepository.DeleteAsync(id);
 
-        if (employee == null)
+        if (!isDeleted)
         {
             return NotFound();
         }
 
-        await _employeeRepository.DeleteEmployeeAsync(employee);
         return NoContent();
     }
 }

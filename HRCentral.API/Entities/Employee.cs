@@ -1,4 +1,4 @@
-namespace HRCentral.API.Models.Entities;
+namespace HRCentral.API.Entities;
 
 public class Employee
 {

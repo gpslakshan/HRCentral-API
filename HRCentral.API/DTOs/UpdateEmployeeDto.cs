@@ -1,4 +1,4 @@
-namespace HRCentral.API.Models.Dtos;
+namespace HRCentral.API.DTOs;
 
 public class UpdateEmployeeDto
 {
