@@ -15,9 +15,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HRCentralDbConnectionString")));
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyCors", builder =>
+    options.AddPolicy("MyCors", policy =>
     {
-        builder.WithOrigins("http://localhost:4200")
+        policy.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader();
     });

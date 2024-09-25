@@ -1,8 +1,7 @@
-namespace HRCentral.API.Models.Domain;
+namespace HRCentral.API.Models.Dtos;
 
-public class Employee
+public class CreateEmployeeDto
 {
-    public int Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }

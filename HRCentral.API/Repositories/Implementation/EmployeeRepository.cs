@@ -1,5 +1,5 @@
 using HRCentral.API.Data;
-using HRCentral.API.Models.Domain;
+using HRCentral.API.Models.Entities;
 using HRCentral.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,22 +30,14 @@ public class EmployeeRepository : IEmployeeRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateEmployeeAsync(Employee employee)
+    public async Task SaveChangesAsync()
     {
-        _context.Employees.Update(employee);
         await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteEmployeeAsync(int id)
+    public async Task DeleteEmployeeAsync(Employee employee)
     {
-        var employeeInDb = await _context.Employees.FindAsync(id);
-
-        if (employeeInDb == null)
-        {
-            throw new KeyNotFoundException($"Employee with id: {id} was not found");
-        }
-
-        _context.Employees.Remove(employeeInDb);
+        _context.Employees.Remove(employee);
         await _context.SaveChangesAsync();
     }
 }
