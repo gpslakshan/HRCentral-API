@@ -1,4 +1,4 @@
-using HRCentral.API.Entities;
+using HRCentral.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRCentral.API.Data;

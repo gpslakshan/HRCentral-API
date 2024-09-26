@@ -1,6 +1,4 @@
 using HRCentral.API.Data;
-using HRCentral.API.Mappings;
-using HRCentral.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +20,6 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
     });
 });
-builder.Services.AddAutoMapper(typeof(AutomapperProfiles));
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 var app = builder.Build();
 

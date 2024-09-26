@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRCentral.API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240917190525_CreateEmployeesTable")]
-    partial class CreateEmployeesTable
+    [Migration("20240926154347_CreateEmployeeEntity")]
+    partial class CreateEmployeeEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace HRCentral.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HRCentral.API.Models.Domain.Employee", b =>
+            modelBuilder.Entity("HRCentral.API.Models.Entities.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,12 +45,14 @@ namespace HRCentral.API.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
