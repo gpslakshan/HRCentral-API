@@ -1,8 +1,7 @@
-using HRCentral.API.Data;
 using HRCentral.API.Models.DTOs;
 using HRCentral.API.Models.Entities;
+using HRCentral.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HRCentral.API.Controllers;
 
@@ -10,24 +9,24 @@ namespace HRCentral.API.Controllers;
 [Route("api/[controller]")]
 public class EmployeesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IEmployeeRepository _employeeRepository;
     
-    public EmployeesController(AppDbContext context)
+    public EmployeesController(IEmployeeRepository employeeRepository)
     {
-        _context = context;
+        _employeeRepository = employeeRepository;
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAllEmployees()
     {
-        var allEmployees = await _context.Employees.ToListAsync();
+        var allEmployees = await _employeeRepository.GetAllEmployeesAsync();
         return Ok(allEmployees);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetEmployeeById([FromRoute] int id)
     {
-        var employee = await _context.Employees.FindAsync(id);
+        var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
 
         if (employee is null)
         {
@@ -50,8 +49,7 @@ public class EmployeesController : ControllerBase
             Salary = createEmployeeDto.Salary
         };
 
-        await _context.Employees.AddAsync(employee);
-        await _context.SaveChangesAsync();
+        await _employeeRepository.AddEmployeeAsync(employee);
         
         return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
     }
@@ -59,7 +57,7 @@ public class EmployeesController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateEmployee([FromRoute] int id, [FromBody] UpdateEmployeeDto updateEmployeeDto)
     {
-        var employee = await _context.Employees.FindAsync(id);
+        var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
 
         if (employee is null)
         {
@@ -73,7 +71,7 @@ public class EmployeesController : ControllerBase
         employee.Position = updateEmployeeDto.Position;
         employee.Salary = updateEmployeeDto.Salary;
 
-        await _context.SaveChangesAsync();
+        await _employeeRepository.UpdateEmployeeAsync(employee);
 
         return Ok(employee);
     }
@@ -81,15 +79,14 @@ public class EmployeesController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteEmployee([FromRoute] int id)
     {
-        var employee = await _context.Employees.FindAsync(id);
+        var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
 
         if (employee is null)
         {
             return NotFound();
         }
 
-        _context.Employees.Remove(employee);
-        await _context.SaveChangesAsync();
+        await _employeeRepository.DeleteEmployeeAsync(id);
 
         return Ok();
     }
