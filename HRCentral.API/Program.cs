@@ -1,4 +1,5 @@
 using HRCentral.API.Data;
+using HRCentral.API.Middlewares;
 using HRCentral.API.Repositories.Implementation;
 using HRCentral.API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
