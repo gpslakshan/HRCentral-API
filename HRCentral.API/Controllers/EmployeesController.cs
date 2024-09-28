@@ -39,6 +39,11 @@ public class EmployeesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateEmployee(CreateEmployeeDto createEmployeeDto)
     {
+        if (ModelState.IsValid == false)
+        {
+            return BadRequest();
+        }
+        
         var employee = new Employee
         {
             FirstName = createEmployeeDto.FirstName,
@@ -57,6 +62,11 @@ public class EmployeesController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateEmployee([FromRoute] int id, [FromBody] UpdateEmployeeDto updateEmployeeDto)
     {
+        if (ModelState.IsValid == false)
+        {
+            return BadRequest();
+        }
+        
         var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
 
         if (employee is null)
