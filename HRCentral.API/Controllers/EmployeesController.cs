@@ -17,14 +17,15 @@ public class EmployeesController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAllEmployees()
+    public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployees()
     {
-        var allEmployees = await _employeeRepository.GetAllEmployeesAsync();
-        return Ok(allEmployees);
+        var employees = await _employeeRepository.GetAllEmployeesAsync();
+        var employeeDtos = MapToEmployeeDto(employees);
+        return Ok(employeeDtos);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetEmployeeById([FromRoute] int id)
+    public async Task<ActionResult<EmployeeDto>> GetEmployeeById([FromRoute] int id)
     {
         var employee = await _employeeRepository.GetEmployeeByIdAsync(id);
 
@@ -33,7 +34,8 @@ public class EmployeesController : ControllerBase
             return NotFound();
         }
 
-        return Ok(employee);
+        var employeeDto = MapToEmployeeDto(employee);
+        return Ok(employeeDto);
     }
 
     [HttpPost]
@@ -55,8 +57,9 @@ public class EmployeesController : ControllerBase
         };
 
         await _employeeRepository.AddEmployeeAsync(employee);
-        
-        return CreatedAtAction(nameof(GetEmployeeById), new { id = employee.Id }, employee);
+
+        var employeeDto = MapToEmployeeDto(employee);
+        return CreatedAtAction(nameof(GetEmployeeById), new { id = employeeDto.Id }, employeeDto);
     }
 
     [HttpPut("{id:int}")]
@@ -83,7 +86,8 @@ public class EmployeesController : ControllerBase
 
         await _employeeRepository.UpdateEmployeeAsync(employee);
 
-        return Ok(employee);
+        var employeeDto = MapToEmployeeDto(employee);
+        return Ok(employeeDto);
     }
 
     [HttpDelete("{id:int}")]
@@ -99,5 +103,26 @@ public class EmployeesController : ControllerBase
         await _employeeRepository.DeleteEmployeeAsync(id);
 
         return Ok();
+    }
+    
+    // Reusable method to map a single Employee to EmployeeDto
+    private EmployeeDto MapToEmployeeDto(Employee employee)
+    {
+        return new EmployeeDto
+        {
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Email = employee.Email,
+            Phone = employee.Phone,
+            Position = employee.Position,
+            Salary = employee.Salary
+        };
+    }
+
+    // Reusable method to map a collection of Employees to EmployeeDtos
+    private IEnumerable<EmployeeDto> MapToEmployeeDto(IEnumerable<Employee> employees)
+    {
+        return employees.Select(e => MapToEmployeeDto(e)).ToList();
     }
 }
